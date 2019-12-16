@@ -1,5 +1,5 @@
 {
-  "name": "Rapid dev",
+  "name": "Rapid-dev",
   "version": "1.0.0",
   "description": "My template to get an express server up and running quickly",
   "main": "app.js",
