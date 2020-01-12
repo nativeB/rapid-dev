@@ -1,11 +1,11 @@
 'use strict';
 const express = require('express');
-// const User = require('../models/user');//user schema
+const Admin = require('../models/admin');//admin schema
 
 const router = express.Router();
 
-router.post('/user/login', async (req, res) => {
-  // Create a new user
+router.post('/admin/new', async (req, res) => {
+  // Create a new hospitail
   try {
    //do something and res
    //  res.status(201).send({ });

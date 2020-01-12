@@ -1,24 +1,24 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
+const port = process.env.PORT||3000;
+
 if (app.get('env') === 'development') {
   require('dotenv').config();
 }
-
-const bodyParser = require('body-parser');
-
-//add your routes here
-const userRouter = require('./routes/user');
-
-const port = process.env.PORT||3000;
-
 require('./config/db');
 
-// app.set('view engine', 'ejs');//only needed if you intend to use ejs or another view engine
 app.use(bodyParser.json());
-app.use(userRouter);
+
+//routes
+const admin = require('./routes/admin');
+const patient = require('./routes/patient');
+
+app.use(admin);
+app.use(patient);
 
 app.get('/', (req, res) => {
-  res.send('template running ');
+  res.send('Hms app running');
 });
 
 app.listen(port, () => {
