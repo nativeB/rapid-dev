@@ -37,30 +37,40 @@ const patientSchema = mongoose.Schema({
   photoURL: {
     type: String
   },
-  phoneNumber: {
-    type: String
-  },
 }, { timestamps: true });
 
 
-patientSchema.statics.findByCriteria = async (criteria) => {
-  //Search for a patient by email and password.
-  const patient = await Patient.findOne(criteria);
-  if (!patient) {
-    throw new Error({ error: 'not valid' });
+patientSchema.pre('save', async function (next) {
+  // Hash the password before saving the patient model
+  const patient = this
+  if (patient.isModified('password')) {
+      patient.password = await bcrypt.hash(patient.password, 8)
   }
-  
-  return patient;
+  next()
+});
+
+patientSchema.methods.generateAuthToken = async function() {
+  // Generate an auth token for the patient
+  const patient = this
+  const token = jwt.sign({_id: patient._id}, process.env.JWT_KEY)
+  patient.token = token;
+  await patient.save();
+  return token
 };
 
-patientSchema.methods.deletePatient = async (id, update) => {
-//   Search for a patient by email and password.
-  const patient = await Patient.findByIdAndDelete(id, update);
+patientSchema.statics.authPatient = async (email, pass) => {
+  // Search for patient by email and password.
+  const patient = await Patient.findOne({ email} );
   if (!patient) {
-    throw new Error({ error: 'Patient  does not exist' });
+      return false
   }
-  return patient;
+  const isPasswordMatch = await bcrypt.compare(pass, patient.password);
+  if (!isPasswordMatch) {
+    return false
+  }
+  return patient
 };
+
 const Patient = mongoose.model('Patient', patientSchema);
 
 module.exports = Patient;

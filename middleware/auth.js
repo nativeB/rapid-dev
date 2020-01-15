@@ -29,8 +29,8 @@ const authPatient = async(req, res, next) => {
         if(!token) throw Error()
         const data = jwt.verify(token, process.env.JWT_KEY)
 
-            const admin = await Admin.findOne({_id: data._id, 'token': token})
-            if (!admin) {
+            const patient = await Patient.findOne({_id: data._id, 'token': token})
+            if (!patient) {
                 throw new Error()
             }
             req.patient = patient

@@ -1,16 +1,16 @@
 'use strict';
 const express = require('express');
-const Patient = require('../models/patient');//patient schema
-
 const router = express.Router();
+const {
+      loginValidator,
+      userSignupValidator,
+      issueCreationValidator
+      } = require('../middleware/validator');
+const {create,login,createIssue} = require('../controllers/patient');
 
-router.post('/patient/signup', async (req, res) => {
-  try {
-   
-   // res.status(201).send({ });
-  } catch (error) {
-    // res.status(400).send(error);
-  }
-});
+router
+.post('/signup',userSignupValidator,create)
+.post('/login',loginValidator,login)
+.post('/issue',issueCreationValidator,createIssue);
 
 module.exports = router;
