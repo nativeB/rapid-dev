@@ -1,7 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const app = express();
 const port = process.env.PORT||3000;
+const {errorHandler}=require('./utils');
+const cookieParser=require('cookie-parser')
 
 if (app.get('env') === 'development') {
   require('dotenv').config();
@@ -9,13 +12,20 @@ if (app.get('env') === 'development') {
 require('./config/db');
 
 app.use(bodyParser.json());
-
+app.use(cors());
+app.use(cookieParser());
 //routes
 const admin = require('./routes/admin');
 const patient = require('./routes/patient');
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+app.use('/admin',admin);
+app.use('/patient',patient);
 
-app.use(admin);
-app.use(patient);
+app.use(errorHandler)
 
 app.get('/', (req, res) => {
   res.send('Hms app running');
