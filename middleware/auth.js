@@ -1,8 +1,8 @@
 //express middlewares here
 const jwt = require('jsonwebtoken')
-const Admin = require('../models/user')
+const Admin = require('../models/admin')
 const Patient = require('../models/patient')
-
+const sendResponse = require('../utils').sendResponse;
 const authAdmin = async(req, res, next) => {
     try {
     const token = req.cookies.token
@@ -19,7 +19,7 @@ const authAdmin = async(req, res, next) => {
         } catch (error) {
         res.clearCookie('token')
         console.log('cookie cleared')
-        return res.status(401).end()
+         await sendResponse(401,'Admin is unauthorised',null,res)
         }
 
 }
@@ -29,22 +29,33 @@ const authPatient = async(req, res, next) => {
         if(!token) throw Error()
         const data = jwt.verify(token, process.env.JWT_KEY)
 
-            const patient = await Patient.findOne({_id: data._id, 'token': token})
-            if (!patient) {
+            const admin = await Admin.findOne({_id: data._id, 'token': token})
+            if (!admin) {
                 throw new Error()
             }
             req.patient = patient
             req.token = token
             next()
         } catch (error) {
-        console.log(error)
         res.clearCookie('token')
         console.log('cookie cleared')
-        return res.status(401).end();    
-    }
+         await sendResponse(401,'Patient is unauthorised',null,res)
+        }
+
 }
+
+const authSuperAdmin= async(req, res, next) => {
+    const id = req.get('id');
+    const pass = req.get('pass');
+    if(id !== process.env.SUPER_ADMIN_ID || pass !== process.env.SUPER_ADMIN_PASS){
+        return await sendResponse(401,'unauthorised',null,res)   
+    }
+    next()
+}
+
 module.exports = {
   authAdmin,
-  authPatient
+  authPatient,
+  authSuperAdmin
 }
 
