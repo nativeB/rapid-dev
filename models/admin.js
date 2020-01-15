@@ -1,7 +1,7 @@
 'use strict';
 const mongoose = require('mongoose');
 const validator = require('validator');
-
+const {throwError,httpStatus} = require('../utils');
 const adminSchema = mongoose.Schema({
   firstName: {
     type: String,
@@ -18,7 +18,7 @@ const adminSchema = mongoose.Schema({
     unique: true,
     validate: value => {
       if (!validator.isEmail(value)) {
-        throw new Error({ error: 'Invalid Email address' });
+        throwError(httpStatus.UNPROCESSABLE_ENTITY,'Invalid Email address' );
       }
     }
   },
@@ -31,31 +31,35 @@ const adminSchema = mongoose.Schema({
   }
 }, { timestamps: true });
 
-// find
-adminSchema.statics.findByCriteria = async (criteria) => {
-  const admin = await Admin.findOne(criteria);
-  if (!admin) {
-    throw new Error({ error: 'not valid' });
+adminSchema.pre('save', async function (next) {
+  // Hash the password before saving the admin model
+  const admin = this
+  if (admin.isModified('password')) {
+      admin.password = await bcrypt.hash(admin.password, 8)
   }
-  
-  return admin;
-};
-
-adminSchema.methods.deleteAdmin = async (id, update) => {
-  const admin = await Admin.findByIdAndDelete(id, update);
-  if (!admin) {
-    throw new Error({ error: 'Admin  does not exist' });
-  }
-  return admin;
-};
+  next()
+});
 
 adminSchema.methods.generateAuthToken = async function() {
-  // Generate an auth token for the user
+  // Generate an auth token for the admin
   const admin = this
   const token = jwt.sign({_id: admin._id}, process.env.JWT_KEY)
-  user.token = token;
+  admin.token = token;
   await admin.save();
   return token
+};
+
+adminSchema.statics.authAdmin = async (email, pass) => {
+  // Search for admin by email and password.
+  const admin = await Admin.findOne({ email} );
+  if (!admin) {
+      return false
+  }
+  const isPasswordMatch = await bcrypt.compare(pass, admin.password);
+  if (!isPasswordMatch) {
+    return false
+  }
+  return admin
 };
 const Admin = mongoose.model('Admin', adminSchema);
 
