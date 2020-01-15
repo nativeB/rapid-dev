@@ -1,17 +1,13 @@
 'use strict';
 const express = require('express');
-const Admin = require('../models/admin');//admin schema
-
 const router = express.Router();
+const {loginValidator,adminSignupValidator} = require('../middleware/validator');
+const {authSuperAdmin} = require('../middleware/auth');
+const {create,login,invite} = require('../controllers/admin');
 
-router.post('/admin/new', async (req, res) => {
-  // Create a new hospitail
-  try {
-   //do something and res
-   //  res.status(201).send({ });
-  } catch (error) {
-    // res.status(400).send(error);
-  }
-});
+router
+.post('/signup',adminSignupValidator,create)
+.post('/login',loginValidator,login)
+.post('/invite',authSuperAdmin,invite);
 
 module.exports = router;
