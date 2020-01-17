@@ -1,25 +1,4 @@
-const sendResponse = async ( code,message,data,res) =>{
-    let success = code == 200 || code === 201;
-    let responseObj = {success,message};
-    if(data)responseObj.data=data;
-    return res.status(code).json(responseObj).end();
-}
-const throwError = (code,message)=>{
-    throw {code,message};
-}
-const loginValidator = (req,res,next) =>{
-    if(validator.isEmail(req.body.email) && req.body.password){
-        next();
-    }
-}
-const adminSignupValidator=(req,res,next)=>{
-    if(validator.isEmail(req.body.email)&&req.body.password&&req.body.bio&&req.body.title){
-        next();
-    }
-}
-const errorHandler = async (req,res)=>{
-    await sendResponse(http.INTERNAL_SERVER_ERROR,'A server error occurred',null,res);
-}
+const validator = require('validator');
 const httpStatus = {
     CONTINUE: '100',
     SWITCHING_PROTOCOLS: '101',
@@ -77,6 +56,29 @@ const httpStatus = {
     NOT_EXTENDED: '510',
     NETWORK_AUTHENTICATION_REQUIRED: '511'
   }
+const sendResponse = async ( code,message,data,res) =>{
+    let success = code == 200 || code == 201;
+
+    let responseObj = {success,message};
+    if(data)responseObj.data=data;
+    return res.status(code).json(responseObj).end();
+}
+const throwError = (code,message)=>{
+    throw {code,message};
+}
+const loginValidator = (req,res,next) =>{
+    if(validator.isEmail(req.body.email) && req.body.password){
+        next();
+    }
+}
+const adminSignupValidator=(req,res,next)=>{
+    if(validator.isEmail(req.body.email)&&req.body.password&&req.body.bio&&req.body.title){
+        next();
+    }
+}
+const errorHandler = async (req,res)=>{
+    await sendResponse(httpStatus.INTERNAL_SERVER_ERROR,'A server error occurred',null,res);
+}
 
 
 module.exports = {

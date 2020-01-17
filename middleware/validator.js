@@ -13,13 +13,14 @@ const loginValidator = (req,res,next) =>{
 }
 }
 const adminSignupValidator=(req, res, next)=>{
-    if(validator.isEmail(req.body.email) && req.body.password && req.body.bio && req.body.title){
+    if(validator.isEmail(req.body.email) && req.body.password && req.body.title && req.body.firstName && req.body.lastName){
         next();
     }else{
+        console.log(validator.isEmail(req.body.email) ,req.body.password ,req.body.title,req.body.firstName , req.body.lastName)
         sendResponse(httpStatus.BAD_REQUEST,'bad request',null,res);
     }
 }
-const userSignupValidator=(req, res, next)=>{
+const patientSignupValidator=(req, res, next)=>{
     if(validator.isEmail(req.body.email) && req.body.password){
         next();
     }else{
@@ -36,6 +37,6 @@ const issueCreationValidator=(req, res, next)=>{
 module.exports = {
     loginValidator,
     adminSignupValidator,
-    userSignupValidator,
+    patientSignupValidator,
     issueCreationValidator
 }

@@ -5,7 +5,7 @@ const Patient = require('../models/patient')
 const sendResponse = require('../utils').sendResponse;
 const authAdmin = async(req, res, next) => {
     try {
-    const token = req.cookies.token
+    const token = req.headers.token
         if(!token) throw Error()
         const data = jwt.verify(token, process.env.JWT_KEY)
 
@@ -17,16 +17,15 @@ const authAdmin = async(req, res, next) => {
             req.token = token
             next()
         } catch (error) {
-        res.clearCookie('token')
-        console.log('cookie cleared')
          await sendResponse(401,'Admin is unauthorised',null,res)
         }
 
 }
 const authPatient = async(req, res, next) => {
     try {
-    const token = req.cookies.token
-        if(!token) throw Error()
+    const token = req.headers.token
+    console.log(token)   
+    if(!token) throw Error()
         const data = jwt.verify(token, process.env.JWT_KEY)
 
             const patient = await Patient.findOne({_id: data._id, 'token': token})
@@ -37,7 +36,7 @@ const authPatient = async(req, res, next) => {
             req.token = token
             next()
         } catch (error) {
-        res.clearCookie('token')
+        // res.clearCookie('token')
         console.log('cookie cleared')
          await sendResponse(401,'Patient is unauthorised',null,res)
         }

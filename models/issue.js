@@ -12,7 +12,7 @@ const issueSchema = mongoose.Schema({
     required: true,
     trim: true
   },
-  patiemt: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient', required: true}
+  patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient', required: true}
 }, { timestamps: true });
 
 

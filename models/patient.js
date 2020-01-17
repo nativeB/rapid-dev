@@ -1,14 +1,17 @@
 'use strict';
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
+const {throwError,httpStatus} = require('../utils');
 
 const patientSchema = mongoose.Schema({
- first: {
+ firstName: {
     type: String,
     required: true,
     trim: true
   },
-  last: {
+  lastName: {
     type: String,
     required: true,
     trim: true
@@ -18,7 +21,7 @@ const patientSchema = mongoose.Schema({
     unique: true,
     validate: value => {
       if (!validator.isEmail(value)) {
-        throw new Error({ error: 'Invalid Email address' });
+        throwError(httpStatus.UNPROCESSABLE_ENTITY,'Invalid Email address' );
       }
     }
   },
@@ -26,17 +29,19 @@ const patientSchema = mongoose.Schema({
     type: String,
     validate: value => {
       if(!validator.isMobilePhone(value)){
-        throw new Error({error:'Invalid phone number'})
+        throwError(httpStatus.UNPROCESSABLE_ENTITY,'Invalid number' );
       }
     }
   },
   token: {
     type: String,
-    required: true
   },
   photoURL: {
     type: String
   },
+  password:{
+    type:String
+  }
 }, { timestamps: true });
 
 

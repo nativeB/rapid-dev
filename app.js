@@ -4,7 +4,6 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT||3000;
 const {errorHandler}=require('./utils');
-const cookieParser=require('cookie-parser')
 
 if (app.get('env') === 'development') {
   require('dotenv').config();
@@ -13,7 +12,6 @@ require('./config/db');
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use(cookieParser());
 //routes
 const admin = require('./routes/admin');
 const patient = require('./routes/patient');

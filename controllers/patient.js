@@ -1,10 +1,10 @@
 const Patient = require('../models/patient');//patient schema
 const Issue = require('../models/issue');//patient schema
 const {sendResponse} = require('../utils');
-const {throwError,httpStatus} = require('../utils');
+const {httpStatus} = require('../utils');
 const patient = {};
 
-patient.create = async (req,res)=>{
+patient.create = async (req,res,next)=>{
     try {
         //create new patient
         const patient = new Patient(req.body);
@@ -19,8 +19,7 @@ patient.login = async (req, res,next) => {
     const patient = await Patient.authPatient(req.body.email,req.body.password);
     if(!patient) return await  await sendResponse(httpStatus.NOT_FOUND,'Wrong email or password',null,res);
 
-    const token = await patient.generateAuthToken();
-    res.cookie('token', token);
+   patient.token = await patient.generateAuthToken();
     await sendResponse(httpStatus.OK,'Patient login success',patient,res);
     } catch (error) {
         next(error);
@@ -33,6 +32,15 @@ patient.createIssue = async (req, res,next) => {
     if(!issue) return await  await sendResponse(httpStatus.BAD_REQUEST,'Issue creation error,might be missing few fields',null,res);
 
     await sendResponse(httpStatus.OK,'Patient login success',patient,res);
+    } catch (error) {
+        next(error);
+    }
+}
+patient.getIssues = async (req, res,next) => {
+    try{
+    const issues  = Issue.find({patient:req.patient._id})
+
+    await sendResponse(httpStatus.OK,'Patient login success',issues,res);
     } catch (error) {
         next(error);
     }

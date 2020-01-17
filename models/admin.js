@@ -1,5 +1,7 @@
 'use strict';
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
 const validator = require('validator');
 const {throwError,httpStatus} = require('../utils');
 const adminSchema = mongoose.Schema({
@@ -23,11 +25,14 @@ const adminSchema = mongoose.Schema({
     }
   },
   token: {
-    type: String,
-    required: true
+    type: String
   },
   photo: {
     type: String
+  },
+  password:{
+    type:String,
+    required:true
   }
 }, { timestamps: true });
 
@@ -55,6 +60,7 @@ adminSchema.statics.authAdmin = async (email, pass) => {
   if (!admin) {
       return false
   }
+
   const isPasswordMatch = await bcrypt.compare(pass, admin.password);
   if (!isPasswordMatch) {
     return false
