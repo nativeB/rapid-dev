@@ -3,14 +3,14 @@ const express = require('express');
 const router = express.Router();
 const {
       loginValidator,
-      userSignupValidator,
+      patientSignupValidator,
       issueCreationValidator
       } = require('../middleware/validator');
-const {create,login,createIssue} = require('../controllers/patient');
-
+const {create,login,createIssue,getIssues} = require('../controllers/patient');
+const {authPatient}=require('../middleware/auth')
 router
-.post('/signup',userSignupValidator,create)
+.post('/signup',patientSignupValidator,create)
 .post('/login',loginValidator,login)
-.post('/issue',issueCreationValidator,createIssue);
-
+.post('/issue',issueCreationValidator,createIssue)
+.get('/issue',authPatient,getIssues)
 module.exports = router;
