@@ -36,8 +36,6 @@ const authPatient = async(req, res, next) => {
             req.token = token
             next()
         } catch (error) {
-        // res.clearCookie('token')
-        console.log('cookie cleared')
          await sendResponse(401,'Patient is unauthorised',null,res)
         }
 

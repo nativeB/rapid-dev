@@ -1,5 +1,7 @@
 const Admin = require('../models/admin');//admin schema
 const Invite = require('../models/invite');//admin schema
+const Patient = require('../models/patient');//admin schema
+const Issue = require('../models/issue');//admin schema
 const {sendResponse} = require('../utils');
 const {httpStatus} = require('../utils');
 const admin = {};
@@ -42,7 +44,61 @@ admin.invite = async (req,res,next) =>{
 }catch(error){
     next(error)
 }
+}
+admin.updateIssue = async (req,res,next) =>{
+    try{
+     if(req.body.response){
+         req.body.responseBy=req.params.id
+         req.body.status='answered'
+     }
+     const issue = await Issue.findByIdAndUpdate(req.params.id,req.body,{new:true})
+    await sendResponse(httpStatus.OK,'issue updated',issue,res);
+}catch(error){
+    next(error)
+}
+}
+admin.getIssues = async (req,res,next) =>{
+    try{  
+        const issues = await Issue.aggregate([
+            {
+            $lookup:{
+                localField:'patient',
+                foreignField:'_id',
+                from:Patient.collection.collectionName,
+                as:'user'}
+            },
+            {
+                $group:{
+                    _id: "$patient",
+                    firstName:{"$first":"$user.firstName"},
+                    lastName:{"$first":"$user.lastName"},
+                    issues: {
+                        $push:{
+                            details:"$details",
+                            _id:"$_id",
+                            status:"$status",
+                            responseBy:"$responseBy",
+                            response:"$response"
+                        }}
+                }
+            },
+            {"$unwind":"$firstName"},
+            {"$unwind":"$lastName"}
+            ]);   
+        await sendResponse(httpStatus.OK,'Successfully got issues',issues,res);
+}catch(error){
+    next(error)
+}
+}
 
+admin.getAdmin = async (req,res,next) =>{
+    try{  
+        const admin = await Admin.findById(req.admin._id).select('-password')   
+        await sendResponse(httpStatus.CREATED,'Successfully got admin',admin,res);
+}catch(error){
+    console.log(error)
+    next(error)
+}
 }
 
 module.exports = admin;

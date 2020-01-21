@@ -28,7 +28,15 @@ const patientSignupValidator=(req, res, next)=>{
     }
 }
 const issueCreationValidator=(req, res, next)=>{
-    if(req.body.name&&req.body.details){
+    if(req.body.details){
+        next();
+    }else{
+        sendResponse(httpStatus.BAD_REQUEST,'bad request',null,res);
+    }
+}
+const issueUpdateValidator=(req, res, next)=>{
+    console.log(req)
+    if(req.body&&req.params.id){
         next();
     }else{
         sendResponse(httpStatus.BAD_REQUEST,'bad request',null,res);
@@ -38,5 +46,6 @@ module.exports = {
     loginValidator,
     adminSignupValidator,
     patientSignupValidator,
-    issueCreationValidator
+    issueCreationValidator,
+    issueUpdateValidator
 }
