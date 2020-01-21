@@ -1,18 +1,18 @@
-'use strict';
-const mongoose = require('mongoose');
+'use strict'
+const mongoose = require('mongoose')
 
 const issueSchema = mongoose.Schema({
   details: {
     type: String,
-    required: true,
+    required: true
   },
-  patient: {type: mongoose.Schema.Types.ObjectId, ref: 'Patient', required: true},
-  status: {type: String,default:'new', enum:['new','answered','resolved']},
-  response: {type: String},
-  responseBy:{type: mongoose.Schema.Types.ObjectId, ref: 'Admin'},
-  
-}, { timestamps: true });
+  patient: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient', required: true },
+  status: { type: String, default: 'new', enum: ['new', 'answered', 'resolved'] },
+  response: { type: String },
+  responseBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' }
 
-const Issue = mongoose.model('Issue', issueSchema);
+}, { timestamps: true })
 
-module.exports = Issue;
+const Issue = mongoose.model('Issue', issueSchema)
+
+module.exports = Issue

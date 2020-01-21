@@ -1,51 +1,50 @@
-const validator = require('validator');
-const {httpStatus,sendResponse} = require('../utils');
-const loginValidator = (req,res,next) =>{
-    try{
-    if(validator.isEmail(req.body.email) && req.body.password){
-        next();
-    }else{
-        sendResponse(httpStatus.BAD_REQUEST,'bad request',null,res);
+const validator = require('validator')
+const { httpStatus, sendResponse } = require('../utils')
+const loginValidator = (req, res, next) => {
+  try {
+    if (validator.isEmail(req.body.email) && req.body.password) {
+      next()
+    } else {
+      sendResponse(httpStatus.BAD_REQUEST, 'bad request', null, res)
     }
-}catch(e){
-    
-    sendResponse(httpStatus.BAD_REQUEST,'bad request',null,res);
+  } catch (e) {
+    sendResponse(httpStatus.BAD_REQUEST, 'bad request', null, res)
+  }
 }
+const adminSignupValidator = (req, res, next) => {
+  if (validator.isEmail(req.body.email) && req.body.password && req.body.title && req.body.firstName && req.body.lastName) {
+    next()
+  } else {
+    console.log(validator.isEmail(req.body.email), req.body.password, req.body.title, req.body.firstName, req.body.lastName)
+    sendResponse(httpStatus.BAD_REQUEST, 'bad request', null, res)
+  }
 }
-const adminSignupValidator=(req, res, next)=>{
-    if(validator.isEmail(req.body.email) && req.body.password && req.body.title && req.body.firstName && req.body.lastName){
-        next();
-    }else{
-        console.log(validator.isEmail(req.body.email) ,req.body.password ,req.body.title,req.body.firstName , req.body.lastName)
-        sendResponse(httpStatus.BAD_REQUEST,'bad request',null,res);
-    }
+const patientSignupValidator = (req, res, next) => {
+  if (validator.isEmail(req.body.email) && req.body.password) {
+    next()
+  } else {
+    sendResponse(httpStatus.BAD_REQUEST, 'bad request', null, res)
+  }
 }
-const patientSignupValidator=(req, res, next)=>{
-    if(validator.isEmail(req.body.email) && req.body.password){
-        next();
-    }else{
-        sendResponse(httpStatus.BAD_REQUEST,'bad request',null,res);
-    }
+const issueCreationValidator = (req, res, next) => {
+  if (req.body.details) {
+    next()
+  } else {
+    sendResponse(httpStatus.BAD_REQUEST, 'bad request', null, res)
+  }
 }
-const issueCreationValidator=(req, res, next)=>{
-    if(req.body.details){
-        next();
-    }else{
-        sendResponse(httpStatus.BAD_REQUEST,'bad request',null,res);
-    }
-}
-const issueUpdateValidator=(req, res, next)=>{
-    console.log(req)
-    if(req.body&&req.params.id){
-        next();
-    }else{
-        sendResponse(httpStatus.BAD_REQUEST,'bad request',null,res);
-    }
+const issueUpdateValidator = (req, res, next) => {
+  console.log(req)
+  if (req.body && req.params.id) {
+    next()
+  } else {
+    sendResponse(httpStatus.BAD_REQUEST, 'bad request', null, res)
+  }
 }
 module.exports = {
-    loginValidator,
-    adminSignupValidator,
-    patientSignupValidator,
-    issueCreationValidator,
-    issueUpdateValidator
+  loginValidator,
+  adminSignupValidator,
+  patientSignupValidator,
+  issueCreationValidator,
+  issueUpdateValidator
 }
