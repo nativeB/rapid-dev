@@ -9,6 +9,10 @@ const admin = {}
 admin.create = async (req, res, next) => {
   try {
     // create new admin
+    const invite = await Invite.find({ email: req.body.email })
+    if (!invite) {
+      return await sendResponse(httpStatus.UNAUTHORIZED, 'not allowed to signup', invite, res)
+    }
     const admin = new Admin(req.body)
     await admin.save()
     await sendResponse(httpStatus.CREATED, 'Admin added', admin, res)

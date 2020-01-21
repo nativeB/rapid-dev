@@ -17,7 +17,7 @@ patient.create = async (req, res, next) => {
 patient.login = async (req, res, next) => {
   try {
     const patient = await Patient.authPatient(req.body.email, req.body.password)
-    if (!patient) return await await sendResponse(httpStatus.NOT_FOUND, 'Wrong email or password', null, res)
+    if (!patient) return await sendResponse(httpStatus.NOT_FOUND, 'Wrong email or password', null, res)
 
     patient.token = await patient.generateAuthToken()
     await sendResponse(httpStatus.OK, 'Patient login success', patient, res)
@@ -30,7 +30,7 @@ patient.createIssue = async (req, res, next) => {
     req.body.patient = req.patient._id
     const issue = new Issue(req.body)
     await issue.save()
-    if (!issue) return await await sendResponse(httpStatus.BAD_REQUEST, 'Issue creation error,might be missing few fields', null, res)
+    if (!issue) return await sendResponse(httpStatus.BAD_REQUEST, 'Issue creation error,might be missing few fields', null, res)
 
     await sendResponse(httpStatus.OK, 'Issue creation success', issue, res)
   } catch (error) {
